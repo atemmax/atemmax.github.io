@@ -1,0 +1,198 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>Управление компьютером</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <style>
+        * { box-sizing: border-box; margin: 0; padding: 0; }
+        body { 
+            font-family: Arial, sans-serif; 
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            min-height: 100vh;
+            padding: 20px;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+        }
+        .container {
+            background: white;
+            padding: 30px;
+            border-radius: 15px;
+            box-shadow: 0 10px 30px rgba(0,0,0,0.2);
+            max-width: 400px;
+            width: 100%;
+            text-align: center;
+        }
+        h1 {
+            color: #333;
+            margin-bottom: 10px;
+            font-size: 24px;
+        }
+        .subtitle {
+            color: #666;
+            margin-bottom: 30px;
+            font-size: 14px;
+        }
+        .input-group {
+            margin-bottom: 20px;
+            text-align: left;
+        }
+        label {
+            display: block;
+            margin-bottom: 5px;
+            color: #333;
+            font-weight: bold;
+        }
+        input {
+            width: 100%;
+            padding: 12px;
+            border: 2px solid #ddd;
+            border-radius: 8px;
+            font-size: 16px;
+            transition: border-color 0.3s;
+        }
+        input:focus {
+            outline: none;
+            border-color: #667eea;
+        }
+        .button {
+            width: 100%;
+            padding: 15px;
+            margin: 10px 0;
+            border: none;
+            border-radius: 8px;
+            font-size: 18px;
+            font-weight: bold;
+            cursor: pointer;
+            transition: all 0.3s;
+        }
+        .shutdown {
+            background: #ff4444;
+            color: white;
+        }
+        .shutdown:hover {
+            background: #cc0000;
+            transform: translateY(-2px);
+        }
+        .restart {
+            background: #ff9800;
+            color: white;
+        }
+        .restart:hover {
+            background: #f57c00;
+            transform: translateY(-2px);
+        }
+        .status {
+            margin-top: 20px;
+            padding: 10px;
+            border-radius: 5px;
+            display: none;
+        }
+        .success { background: #d4edda; color: #155724; }
+        .error { background: #f8d7da; color: #721c24; }
+        .info {
+            margin-top: 20px;
+            padding: 15px;
+            background: #e7f3ff;
+            border-radius: 8px;
+            font-size: 12px;
+            color: #0066cc;
+            text-align: left;
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <h1>🖥️ Управление компьютером</h1>
+        <div class="subtitle">Удаленное выключение и перезагрузка</div>
+        
+        <div class="input-group">
+            <label for="ip">IP адрес компьютера:</label>
+            <input type="text" id="ip" placeholder="192.168.1.100" value="192.168.1.100">
+        </div>
+        
+        <div class="input-group">
+            <label for="password">Пароль:</label>
+            <input type="password" id="password" placeholder="123" value="123">
+        </div>
+        
+        <button class="button shutdown" onclick="sendCommand('shutdown')">
+            🔴 ВЫКЛЮЧИТЬ КОМПЬЮТЕР
+        </button>
+        
+        <button class="button restart" onclick="sendCommand('restart')">
+            🔄 ПЕРЕЗАГРУЗИТЬ КОМПЬЮТЕР
+        </button>
+        
+        <div id="status" class="status"></div>
+        
+        <div class="info">
+            <strong>💡 Как использовать:</strong><br>
+            1. Запусти server.py на компьютере<br>
+            2. Узнай IP компьютера (ipconfig)<br>
+            3. Введи IP и пароль здесь<br>
+            4. Нажми кнопку - компьютер выключится!
+        </div>
+    </div>
+
+    <script>
+        async function sendCommand(command) {
+            const ip = document.getElementById('ip').value;
+            const password = document.getElementById('password').value;
+            const status = document.getElementById('status');
+            
+            if (!ip) {
+                showStatus('Введите IP адрес компьютера', 'error');
+                return;
+            }
+            
+            if (!password) {
+                showStatus('Введите пароль', 'error');
+                return;
+            }
+            
+            const url = `http://${ip}:8080/${command}?password=${password}`;
+            
+            try {
+                showStatus('Отправка команды...', '');
+                
+                const response = await fetch(url);
+                const text = await response.text();
+                
+                if (response.ok) {
+                    showStatus('✅ Команда выполнена! Компьютер выключается...', 'success');
+                } else {
+                    showStatus('❌ Ошибка: ' + text, 'error');
+                }
+            } catch (error) {
+                showStatus('❌ Ошибка подключения. Проверьте IP и запущен ли сервер на компьютере', 'error');
+            }
+        }
+        
+        function showStatus(message, type) {
+            const status = document.getElementById('status');
+            status.textContent = message;
+            status.className = 'status ' + type;
+            status.style.display = 'block';
+        }
+        
+        // Сохраняем настройки
+        document.getElementById('ip').addEventListener('input', function() {
+            localStorage.setItem('computer_ip', this.value);
+        });
+        
+        document.getElementById('password').addEventListener('input', function() {
+            localStorage.setItem('computer_password', this.value);
+        });
+        
+        // Загружаем сохраненные настройки
+        window.addEventListener('load', function() {
+            const savedIP = localStorage.getItem('computer_ip');
+            const savedPassword = localStorage.getItem('computer_password');
+            
+            if (savedIP) document.getElementById('ip').value = savedIP;
+            if (savedPassword) document.getElementById('password').value = savedPassword;
+        });
+    </script>
+</body>
+</html>
