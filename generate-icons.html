@@ -1,0 +1,45 @@
+<!DOCTYPE html>
+<html>
+<body>
+  <canvas id="canvas" width="512" height="512"></canvas>
+  <script>
+    const canvas = document.getElementById('canvas');
+    const ctx = canvas.getContext('2d');
+    
+    // Фон
+    ctx.fillStyle = '#1a1a2e';
+    ctx.fillRect(0, 0, 512, 512);
+    
+    // Текст
+    ctx.fillStyle = '#ff6b6b';
+    ctx.font = 'bold 200px Arial';
+    ctx.textAlign = 'center';
+    ctx.textBaseline = 'middle';
+    ctx.fillText('🎮', 256, 256);
+    
+    // Сохраняем иконки
+    const link192 = document.createElement('a');
+    link192.download = 'icon-192.png';
+    link192.href = canvas.toDataURL();
+    
+    canvas.width = 192;
+    canvas.height = 192;
+    ctx.fillStyle = '#1a1a2e';
+    ctx.fillRect(0, 0, 192, 192);
+    ctx.fillStyle = '#ff6b6b';
+    ctx.font = 'bold 80px Arial';
+    ctx.textAlign = 'center';
+    ctx.textBaseline = 'middle';
+    ctx.fillText('🎮', 96, 96);
+    
+    const link512 = document.createElement('a');
+    link512.download = 'icon-512.png';
+    link512.href = canvas.toDataURL();
+    
+    document.body.appendChild(link192);
+    document.body.appendChild(link512);
+    link192.click();
+    link512.click();
+  </script>
+</body>
+</html>
