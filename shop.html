@@ -1,0 +1,201 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Магазин | Бабуин</title>
+    <meta name="theme-color" content="#1a1a2e">
+    <link rel="manifest" href="manifest.json">
+    <link rel="icon" type="image/png" href="icon-192.png">
+    <link href="https://fonts.googleapis.com/css2?family=Orbitron:wght@900&display=swap" rel="stylesheet">
+    <style>
+        * {
+            margin: 0; padding: 0; box-sizing: border-box;
+            -webkit-tap-highlight-color: transparent;
+            -webkit-user-select: none;
+            user-select: none;
+            touch-action: manipulation;
+        }
+        body {
+            background: linear-gradient(45deg, #1a1a2e, #16213e, #0f3460);
+            font-family: 'Orbitron', sans-serif;
+            padding: 20px;
+            min-height: 100vh;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            color: white;
+            overflow-y: auto;
+        }
+        .shop-header {
+            text-align: center;
+            margin-bottom: 30px;
+        }
+        .shop-title {
+            font-size: 2.5rem;
+            color: #ff6b6b;
+            text-shadow: 0 0 15px rgba(255,107,107,0.7);
+        }
+        .balance {
+            font-size: 1.2rem;
+            margin-top: 10px;
+            color: #aaa;
+        }
+        .balance-value {
+            color: #ff6b6b;
+            font-weight: bold;
+        }
+        .items {
+            width: 100%;
+            max-width: 400px;
+            display: flex;
+            flex-direction: column;
+            gap: 15px;
+        }
+        .item {
+            background: rgba(255,255,255,0.1);
+            backdrop-filter: blur(10px);
+            border: 2px solid rgba(255,255,255,0.2);
+            border-radius: 16px;
+            padding: 20px;
+            text-align: center;
+            transition: transform 0.2s;
+        }
+        .item:hover {
+            transform: scale(1.02);
+        }
+        .item h3 {
+            font-size: 1.4rem;
+            margin-bottom: 10px;
+            color: #ff6b6b;
+        }
+        .item .desc {
+            font-size: 0.95rem;
+            color: #ddd;
+            margin-bottom: 12px;
+            line-height: 1.4;
+        }
+        .item .price {
+            font-size: 1.3rem;
+            font-weight: bold;
+            color: #ffd166;
+            margin: 10px 0;
+        }
+        .buy-btn {
+            background: linear-gradient(45deg, #06d6a0, #118ab2);
+            color: white;
+            border: none;
+            padding: 14px;
+            border-radius: 12px;
+            font-family: 'Orbitron', sans-serif;
+            font-size: 1.1rem;
+            font-weight: bold;
+            cursor: pointer;
+            width: 100%;
+            transition: all 0.3s;
+        }
+        .buy-btn:hover {
+            transform: translateY(-3px);
+            box-shadow: 0 5px 15px rgba(6, 214, 160, 0.4);
+        }
+        .back-btn {
+            margin-top: 25px;
+            padding: 14px;
+            width: 100%;
+            max-width: 400px;
+            background: linear-gradient(45deg, #6a11cb, #2575fc);
+            color: white;
+            border: none;
+            border-radius: 12px;
+            font-family: 'Orbitron', sans-serif;
+            font-size: 1.2rem;
+            font-weight: bold;
+            cursor: pointer;
+            transition: all 0.3s;
+        }
+        .back-btn:hover {
+            transform: translateY(-3px);
+            box-shadow: 0 5px 15px rgba(106, 17, 203, 0.5);
+        }
+    </style>
+</head>
+<body>
+    <div class="shop-header">
+        <div class="shop-title">🛒 МАГАЗИН</div>
+        <div class="balance">Ваш баланс: <span class="balance-value" id="balance">0</span> кликов</div>
+    </div>
+
+    <div class="items">
+        <div class="item">
+            <h3>🤖 Автоклик +1</h3>
+            <div class="desc">Добавляет +1 клик в секунду, даже когда вы не в приложении</div>
+            <div class="price">2 500 кликов</div>
+            <button class="buy-btn" onclick="buy('autoclick1')">Купить</button>
+        </div>
+
+        <div class="item">
+            <h3>🤖 Автоклик +5</h3>
+            <div class="desc">Добавляет +5 кликов в секунду. Суммируется с другими</div>
+            <div class="price">15 000 кликов</div>
+            <button class="buy-btn" onclick="buy('autoclick5')">Купить</button>
+        </div>
+
+        <div class="item">
+            <h3>💥 Мощность +5</h3>
+            <div class="desc">Каждый ручной клик даёт +5 кликов дополнительно</div>
+            <div class="price">35 000 кликов</div>
+            <button class="buy-btn" onclick="buy('power5')">Купить</button>
+        </div>
+
+        <div class="item">
+            <h3>🌠 АСТЕРОИД</h3>
+            <div class="desc">Редкий предмет! Ничего не даёт в игре, но отправляется в Telegram. Статус!</div>
+            <div class="price">100 000 кликов</div>
+            <button class="buy-btn" onclick="buy('asteroid')">Купить</button>
+        </div>
+    </div>
+
+    <button class="back-btn" onclick="location.href='/'">← Назад в кликер</button>
+
+    <script>
+        let balance = 0;
+
+        function updateBalance() {
+            const bal = localStorage.getItem('clicker_balance');
+            balance = parseInt(bal) || 0;
+            document.getElementById('balance').textContent = balance.toLocaleString('ru');
+        }
+
+        async function buy(item) {
+            // Вызываем функцию из index.html через window.opener (если открыто в PWA как SPA — не сработает)
+            // Лучше — через postMessage, но для простоты: перезагрузим данные после покупки
+            if (window.opener && window.opener.buyItem) {
+                const success = await window.opener.buyItem(item);
+                if (success) updateBalance();
+            } else {
+                // Если открыто как отдельная страница — используем localStorage + обновление
+                const prices = {autoclick1:2500, autoclick5:15000, power5:35000, asteroid:100000};
+                const cost = prices[item];
+                if (balance < cost) {
+                    alert('❌ Недостаточно средств!');
+                    return;
+                }
+                // Имитация покупки (на самом деле боту отправлять не получится без сервера или opener)
+                // Поэтому для полноценной работы открывайте /shop как часть SPA или через router
+                alert('⚠️ Чтобы покупки работали, открывайте магазин через PWA (не напрямую по URL)');
+                return;
+            }
+        }
+
+        // Обновление каждые 2 сек — на случай, если баланс изменился в фоне
+        setInterval(updateBalance, 2000);
+        updateBalance();
+
+        // Поддержка PWA: если открыто в standalone — можно использовать broadcast channel или просто проверить
+        if (window.matchMedia('(display-mode: standalone)').matches || 
+            window.navigator.standalone === true) {
+            // В PWA — покупки будут работать через вызов main-окна
+        }
+    </script>
+</body>
+</html>
