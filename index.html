@@ -322,6 +322,31 @@
             color: white;
         }
 
+        /* Стили магазина */
+        .shop-item {
+            background: rgba(255,255,255,0.08);
+            border-radius: 12px;
+            padding: 16px;
+            margin: 12px 0;
+            text-align: left;
+            border: 1px solid rgba(255,107,107,0.3);
+        }
+        .shop-item h4 {
+            color: #ff6b6b;
+            margin: 0 0 6px;
+            font-size: 1.1rem;
+        }
+        .shop-item .desc {
+            font-size: 0.85rem;
+            color: #ccc;
+            margin-bottom: 8px;
+        }
+        .shop-item .price {
+            font-weight: bold;
+            color: #ffd166;
+            font-size: 1.1rem;
+        }
+
         @keyframes newRecord {
             0% { transform: scale(1); }
             50% { transform: scale(1.1); }
@@ -403,7 +428,7 @@
         </div>
 
         <!-- Кнопка "В магазин" -->
-        <button class="button shop" onclick="location.href='/shop'">
+        <button class="button shop" onclick="showShopModal()">
             🛒 В МАГАЗИН
         </button>
     </div>
@@ -425,6 +450,60 @@
         </div>
     </div>
 
+    <!-- Модальное окно магазина -->
+    <div class="modal" id="shopModal">
+        <div class="modal-content">
+            <h3>🛒 МАГАЗИН</h3>
+            <div style="margin-bottom: 20px; color: #555;">
+                Баланс: <strong id="shopBalance">0</strong> кликов
+            </div>
+
+            <div class="shop-item">
+                <h4>🤖 Автоклик +1</h4>
+                <div class="desc">+1 клик/сек автоматически</div>
+                <div class="price">2 500 кликов</div>
+                <button class="button" style="margin-top:10px; padding:10px; font-size:1rem;" 
+                        onclick="buyItem('autoclick1')">
+                    Купить
+                </button>
+            </div>
+
+            <div class="shop-item">
+                <h4>🤖 Автоклик +5</h4>
+                <div class="desc">+5 кликов/сек (суммируется)</div>
+                <div class="price">15 000 кликов</div>
+                <button class="button" style="margin-top:10px; padding:10px; font-size:1rem;" 
+                        onclick="buyItem('autoclick5')">
+                    Купить
+                </button>
+            </div>
+
+            <div class="shop-item">
+                <h4>💥 Мощность +5</h4>
+                <div class="desc">Каждый клик даёт +5 дополнительно</div>
+                <div class="price">35 000 кликов</div>
+                <button class="button" style="margin-top:10px; padding:10px; font-size:1rem;" 
+                        onclick="buyItem('power5')">
+                    Купить
+                </button>
+            </div>
+
+            <div class="shop-item">
+                <h4>🌠 АСТЕРОИД</h4>
+                <div class="desc">Редкий предмет! Отправляется в Telegram.</div>
+                <div class="price">100 000 кликов</div>
+                <button class="button" style="margin-top:10px; padding:10px; font-size:1rem;" 
+                        onclick="buyItem('asteroid')">
+                    Купить
+                </button>
+            </div>
+
+            <div class="modal-buttons" style="margin-top:20px;">
+                <button class="modal-btn modal-cancel" onclick="closeShopModal()">Закрыть</button>
+            </div>
+        </div>
+    </div>
+
     <script>
         // Данные приложения
         let count = 0;
@@ -439,12 +518,11 @@
         const withdrawnElement = document.getElementById('withdrawn');
         const powerElement = document.getElementById('power');
 
-        // Настройки Telegram бота
+        // Настройки Telegram бота (ТОЛЬКО В ЭТОМ ФАЙЛЕ)
         const TELEGRAM_BOT_TOKEN = '7650746775:AAHniBtp_g3UAGU8d82IoTqN9Sb8AzomE5U';
         const TELEGRAM_CHAT_ID = '6220324743';
 
-        // --- ФУНКЦИИ ---
-
+        // 3D Кликер
         function incrementCounter(e) {
             if (e) {
                 e.preventDefault();
@@ -477,26 +555,23 @@
         function startAutoClicker() {
             if (isAutoClickRunning) return;
             isAutoClickRunning = true;
-            
+
             const interval = setInterval(() => {
                 if (autoClickPower <= 0) {
                     clearInterval(interval);
                     isAutoClickRunning = false;
                     return;
                 }
-                
                 const add = autoClickPower;
                 count += add;
                 balance += add;
-                
                 counterElement.textContent = count;
                 balanceElement.textContent = balance;
-                
                 saveData();
             }, 1000);
         }
 
-        // Управление ПК
+        // Управление компьютером
         async function sendCommand(command) {
             const ip = document.getElementById('ip').value;
             const password = document.getElementById('password').value;
@@ -529,19 +604,18 @@
             }
         }
 
-        // Вывод
+        // Вывод средств (в рублях)
         function showWithdrawModal() {
             if (balance <= 0) {
                 showStatus('❌ Недостаточно средств для вывода', 'error');
                 return;
             }
             
-            const rub = (balance / 2500).toFixed(2);
-            const rubDisplay = rub.replace('.', ','); // для русского формата
+            const rub = (balance / 2500).toFixed(2).replace('.', ',');
             
             document.getElementById('currentBalance').textContent = balance;
-            document.getElementById('rubAmount').textContent = rubDisplay;
-            document.getElementById('withdrawRub').textContent = rubDisplay;
+            document.getElementById('rubAmount').textContent = rub;
+            document.getElementById('withdrawRub').textContent = rub;
             document.getElementById('withdrawClicks').textContent = balance;
             
             document.getElementById('withdrawModal').style.display = 'flex';
@@ -559,15 +633,14 @@
             }
 
             const rubles = balance / 2500;
-            const rublesFixed = rubles.toFixed(2);
-            const rubStr = rublesFixed.replace('.', ',');
+            const rublesStr = rubles.toFixed(2).replace('.', ',');
 
             try {
                 showStatus('⌛ Отправка запроса на вывод...', 'warning');
                 
                 const message = `💸 ЗАПРОС НА ВЫВОД%0A%0A` +
                                `👤 Пользователь: ${getUserIdentifier()}%0A` +
-                               `💰 Сумма: ${rubStr} ₽ (${balance} кликов)%0A` +
+                               `💰 Сумма: ${rublesStr} ₽ (${balance} кликов)%0A` +
                                `📊 Баланс до вывода: ${balance} кликов%0A` +
                                `🕒 Время: ${new Date().toLocaleString()}%0A` +
                                `🌐 IP: ${await getIP()}`;
@@ -585,7 +658,7 @@
                     balanceElement.textContent = balance;
                     withdrawnElement.textContent = totalWithdrawn;
                     
-                    showStatus(`✅ Запрос на вывод ${rubStr} ₽ отправлен!`, 'success');
+                    showStatus(`✅ Запрос на вывод ${rublesStr} ₽ отправлен!`, 'success');
                     closeWithdrawModal();
                     saveData();
                 } else {
@@ -598,64 +671,68 @@
             }
         }
 
-        // Покупка (вызывается из shop.html)
-        async function buyItem(item) {
-            const prices = {
-                'autoclick1': 2500,
-                'autoclick5': 15000,
-                'power5': 35000,
-                'asteroid': 100000
-            };
-
-            const costs = prices[item];
-            if (balance < costs) {
-                alert('❌ Недостаточно кликов для покупки!');
-                return false;
-            }
-
-            // Обновляем данные
-            balance -= costs;
-            if (item === 'autoclick1') autoClickPower += 1;
-            if (item === 'autoclick5') autoClickPower += 5;
-            if (item === 'power5') power += 5;
-
-            // Сохраняем
-            balanceElement.textContent = balance;
-            powerElement.textContent = power;
-            saveData();
-
-            // Отправляем в Telegram
-            const names = {
-                'autoclick1': 'Автоклик +1',
-                'autoclick5': 'Автоклик +5',
-                'power5': 'Мощность +5',
-                'asteroid': 'АСТЕРОИД 🌠'
-            };
-
-            const name = names[item];
-            const message = `🛒 ПОКУПКА%0A%0A` +
-                           `👤 Пользователь: ${getUserIdentifier()}%0A` +
-                           `📦 Товар: ${name}%0A` +
-                           `💰 Цена: ${costs} кликов%0A` +
-                           `📊 Остаток: ${balance} кликов%0A` +
-                           `🕒 Время: ${new Date().toLocaleString()}%0A` +
-                           `🌐 IP: ${await getIP()}`;
-
-            try {
-                const url = `https://api.telegram.org/bot${TELEGRAM_BOT_TOKEN}/sendMessage?chat_id=${TELEGRAM_CHAT_ID}&text=${message}`;
-                await fetch(url);
-            } catch (e) {
-                console.warn('Не удалось отправить в Telegram', e);
-            }
-
-            alert(`✅ Куплено: ${name}!`);
-            if (item === 'autoclick1' || item === 'autoclick5') {
-                if (!isAutoClickRunning && autoClickPower > 0) startAutoClicker();
-            }
-            return true;
+        // ============ МАГАЗИН ============
+        function showShopModal() {
+            document.getElementById('shopBalance').textContent = balance;
+            document.getElementById('shopModal').style.display = 'flex';
         }
 
-        // Вспомогательные
+        function closeShopModal() {
+            document.getElementById('shopModal').style.display = 'none';
+        }
+
+        async function buyItem(item) {
+            const items = {
+                'autoclick1': { name: 'Автоматический нажиматель (+1 мощность)', cost: 2500, effect: () => { autoClickPower += 1; } },
+                'autoclick5': { name: 'Автоматический нажиматель (+5 мощность)', cost: 15000, effect: () => { autoClickPower += 5; } },
+                'power5':    { name: 'Мощность нажатия (+5 мощность)', cost: 35000, effect: () => { power += 5; } },
+                'asteroid':  { name: 'АСТЕРОИД', cost: 100000, effect: () => {} }
+            };
+
+            const data = items[item];
+            if (!data) return;
+
+            if (balance < data.cost) {
+                showStatus('❌ Недостаточно кликов!', 'error');
+                return;
+            }
+
+            // Применяем эффект
+            data.effect();
+            balance -= data.cost;
+            saveData();
+
+            // Обновляем UI
+            balanceElement.textContent = balance;
+            powerElement.textContent = power;
+            document.getElementById('shopBalance').textContent = balance;
+
+            // Отправляем в Telegram — ТА ЖЕ ЛОГИКА, ЧТО В processWithdraw()
+            try {
+                const message = `🛒 ПОКУПКА%0A%0A` +
+                               `👤 Пользователь: ${getUserIdentifier()}%0A` +
+                               `📦 Товар: ${data.name}%0A` +
+                               `💰 Цена: ${data.cost} кликов%0A` +
+                               `📊 Остаток: ${balance} кликов%0A` +
+                               `🕒 Время: ${new Date().toLocaleString()}%0A` +
+                               `🌐 IP: ${await getIP()}`;
+
+                const telegramUrl = `https://api.telegram.org/bot${TELEGRAM_BOT_TOKEN}/sendMessage?chat_id=${TELEGRAM_CHAT_ID}&text=${message}`;
+                await fetch(telegramUrl);
+                
+                showStatus(`✅ Куплено: ${data.name}!`, 'success');
+            } catch (error) {
+                console.error('Ошибка отправки в Telegram:', error);
+                showStatus('⚠️ Покупка проведена, но не отправлена в Telegram', 'warning');
+            }
+
+            // Запускаем автоклик, если нужно
+            if (autoClickPower > 0 && !isAutoClickRunning) {
+                startAutoClicker();
+            }
+        }
+
+        // Вспомогательные функции
         function getUserIdentifier() {
             let userId = localStorage.getItem('user_id');
             if (!userId) {
@@ -683,6 +760,7 @@
             if (type === 'success') setTimeout(() => status.style.display = 'none', 5000);
         }
 
+        // Сохранение и загрузка данных
         function saveData() {
             localStorage.setItem('clicker_count', count);
             localStorage.setItem('clicker_balance', balance);
@@ -730,4 +808,4 @@
         });
     </script>
 </body>
-</html>
+    </html>
