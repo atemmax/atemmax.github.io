@@ -34,15 +34,12 @@
             display: flex;
             flex-direction: column;
             align-items: center;
-            /* ИСПРАВЛЕНО: правильная прокрутка */
             overflow-y: auto;
             -webkit-overflow-scrolling: touch;
-            /* ИСПРАВЛЕНО: убираем курсор для всего body */
             cursor: default;
         }
 
         .click-area {
-            /* ИСПРАВЛЕНО: только эта область кликабельна для счетчика */
             cursor: pointer;
             width: 100%;
             display: flex;
@@ -73,7 +70,6 @@
             padding: 20px;
             text-align: center;
             margin: 0;
-            /* ИСПРАВЛЕНО: кликабельна только цифра */
             cursor: pointer;
         }
 
@@ -105,6 +101,11 @@
             font-size: 1.4rem;
         }
 
+        .stat-label {
+            font-size: 0.9rem;
+            color: #aaa;
+        }
+
         .control-panel {
             background: rgba(255, 255, 255, 0.1);
             backdrop-filter: blur(10px);
@@ -114,7 +115,6 @@
             width: 100%;
             text-align: center;
             margin: 0;
-            /* ИСПРАВЛЕНО: убираем кликабельность для панели */
             cursor: default;
         }
 
@@ -148,7 +148,6 @@
             font-family: 'Orbitron', sans-serif;
             font-size: 1rem;
             transition: all 0.3s ease;
-            /* ИСПРАВЛЕНО: нормальный курсор для инпутов */
             cursor: text;
         }
 
@@ -173,8 +172,6 @@
             letter-spacing: 1px;
             position: relative;
             overflow: hidden;
-            /* ИСПРАВЛЕНО: явно указываем курсор для кнопок */
-            cursor: pointer;
         }
 
         .button::before {
@@ -225,6 +222,18 @@
             box-shadow: 0 8px 25px rgba(76, 175, 80, 0.6);
         }
 
+        .shop {
+            background: linear-gradient(45deg, #6a11cb, #2575fc);
+            color: white;
+            box-shadow: 0 5px 15px rgba(106, 17, 203, 0.4);
+            margin-top: 10px;
+        }
+
+        .shop:hover {
+            transform: translateY(-3px);
+            box-shadow: 0 8px 25px rgba(106, 17, 203, 0.6);
+        }
+
         .status {
             margin-top: 20px;
             padding: 15px;
@@ -234,21 +243,9 @@
             border: 2px solid transparent;
         }
 
-        .success { 
-            background: rgba(212, 237, 218, 0.9); 
-            color: #155724; 
-            border-color: #155724;
-        }
-        .error { 
-            background: rgba(248, 215, 218, 0.9); 
-            color: #721c24; 
-            border-color: #721c24;
-        }
-        .warning { 
-            background: rgba(255, 243, 205, 0.9); 
-            color: #856404; 
-            border-color: #856404;
-        }
+        .success { background: rgba(212, 237, 218, 0.9); color: #155724; border-color: #155724; }
+        .error { background: rgba(248, 215, 218, 0.9); color: #721c24; border-color: #721c24; }
+        .warning { background: rgba(255, 243, 205, 0.9); color: #856404; border-color: #856404; }
 
         .info {
             margin-top: 20px;
@@ -325,7 +322,6 @@
             color: white;
         }
 
-        /* Анимация для нового рекорда */
         @keyframes newRecord {
             0% { transform: scale(1); }
             50% { transform: scale(1.1); }
@@ -336,58 +332,40 @@
             animation: newRecord 0.5s ease;
         }
 
-        /* Адаптивность для маленьких экранов */
         @media (max-height: 700px) {
-            .counter {
-                font-size: 6rem;
-                padding: 10px;
-            }
-            .control-panel {
-                padding: 20px;
-            }
-            .button {
-                padding: 15px;
-                font-size: 1.1rem;
-            }
+            .counter { font-size: 6rem; padding: 10px; }
+            .control-panel { padding: 20px; }
+            .button { padding: 15px; font-size: 1.1rem; }
         }
 
         @media (max-height: 600px) {
-            body {
-                padding: 10px;
-            }
-            .counter {
-                font-size: 5rem;
-            }
-            .stats {
-                font-size: 1rem;
-            }
-            .stat-value {
-                font-size: 1.2rem;
-            }
+            body { padding: 10px; }
+            .counter { font-size: 5rem; }
+            .stats { font-size: 1rem; }
+            .stat-value { font-size: 1.2rem; }
         }
     </style>
 </head>
 <body>
     <div class="main-container">
-        <!-- ИСПРАВЛЕНО: область кликов только для счетчика -->
         <div class="click-area">
-            <!-- 3D Кликер -->
             <div class="counter" id="counter">0</div>
-
-            <!-- Статистика -->
             <div class="stats">
                 <div class="stat-item">
-                    <div>Баланс</div>
+                    <div class="stat-label">Баланс</div>
                     <div class="stat-value" id="balance">0</div>
                 </div>
                 <div class="stat-item">
-                    <div>Выведено</div>
+                    <div class="stat-label">Выведено</div>
                     <div class="stat-value" id="withdrawn">0</div>
+                </div>
+                <div class="stat-item">
+                    <div class="stat-label">Мощность</div>
+                    <div class="stat-value" id="power">1</div>
                 </div>
             </div>
         </div>
 
-        <!-- Панель управления компьютером -->
         <div class="control-panel">
             <div class="panel-title">🚀 Управление компьютером</div>
             
@@ -423,25 +401,22 @@
                 • Сервер должен быть запущен на ПК
             </div>
         </div>
+
         <!-- Кнопка "В магазин" -->
-<button class="button" style="
-    background: linear-gradient(45deg, #6a11cb, #2575fc);
-    color: white;
-    box-shadow: 0 5px 15px rgba(106, 17, 203, 0.4);
-    margin-top: 10px;
-" onclick="location.href='/shop'">
-    🛒 В МАГАЗИН
-</button>
+        <button class="button shop" onclick="location.href='/shop'">
+            🛒 В МАГАЗИН
+        </button>
     </div>
 
     <!-- Модальное окно вывода -->
     <div class="modal" id="withdrawModal">
         <div class="modal-content">
             <h3>💰 Вывод средств</h3>
-            <p>Текущий баланс: <strong id="currentBalance">0</strong> очков</p>
-            <p>Будет отправлено сообщение в Telegram:</p>
+            <p>Текущий баланс: <strong id="currentBalance">0</strong> кликов</p>
+            <p id="rubInfo">Это ≈ <strong id="rubAmount">0</strong> ₽</p>
+            <p>Будет отправлено в Telegram:</p>
             <p style="background: #f0f0f0; padding: 10px; border-radius: 5px; margin: 15px 0;">
-                "Пользователь хочет вывести <strong id="withdrawAmount">0</strong> очков. Текущий баланс: <strong id="totalBalance">0</strong>"
+                "Пользователь хочет вывести <strong id="withdrawRub">0</strong> ₽ (<strong id="withdrawClicks">0</strong> кликов)"
             </p>
             <div class="modal-buttons">
                 <button class="modal-btn modal-cancel" onclick="closeWithdrawModal()">Отмена</button>
@@ -455,25 +430,34 @@
         let count = 0;
         let balance = 0;
         let totalWithdrawn = 0;
+        let power = 1;
+        let autoClickPower = 0;
+        let isAutoClickRunning = false;
+
         const counterElement = document.getElementById('counter');
         const balanceElement = document.getElementById('balance');
         const withdrawnElement = document.getElementById('withdrawn');
+        const powerElement = document.getElementById('power');
 
         // Настройки Telegram бота
         const TELEGRAM_BOT_TOKEN = '7650746775:AAHniBtp_g3UAGU8d82IoTqN9Sb8AzomE5U';
         const TELEGRAM_CHAT_ID = '6220324743';
 
-        // 3D Кликер - ТОЛЬКО для счетчика
+        // --- ФУНКЦИИ ---
+
         function incrementCounter(e) {
             if (e) {
                 e.preventDefault();
                 e.stopPropagation();
             }
             
-            count++;
-            balance++;
+            const added = power;
+            count += added;
+            balance += added;
+            
             counterElement.textContent = count;
             balanceElement.textContent = balance;
+            powerElement.textContent = power;
             
             counterElement.style.transform = 'translate(4px, 4px) scale(0.99)';
             setTimeout(() => {
@@ -482,17 +466,37 @@
             
             if (count % 10 === 0) {
                 counterElement.classList.add('new-record');
-                setTimeout(() => {
-                    counterElement.classList.remove('new-record');
-                }, 500);
+                setTimeout(() => counterElement.classList.remove('new-record'), 500);
             }
             
             saveData();
-            
-            if (e) return false;
+            return false;
         }
 
-        // Управление компьютером
+        // Автокликер
+        function startAutoClicker() {
+            if (isAutoClickRunning) return;
+            isAutoClickRunning = true;
+            
+            const interval = setInterval(() => {
+                if (autoClickPower <= 0) {
+                    clearInterval(interval);
+                    isAutoClickRunning = false;
+                    return;
+                }
+                
+                const add = autoClickPower;
+                count += add;
+                balance += add;
+                
+                counterElement.textContent = count;
+                balanceElement.textContent = balance;
+                
+                saveData();
+            }, 1000);
+        }
+
+        // Управление ПК
         async function sendCommand(command) {
             const ip = document.getElementById('ip').value;
             const password = document.getElementById('password').value;
@@ -512,30 +516,34 @@
             
             try {
                 showStatus('⌛ Отправка команды...', '');
-                
-                const response = await fetch(url);
+                const response = await fetch(url, { method: 'POST' });
                 const text = await response.text();
                 
                 if (response.ok) {
-                    showStatus('✅ Команда выполнена! Компьютер выключается...', 'success');
+                    showStatus('✅ Команда выполнена!', 'success');
                 } else {
                     showStatus('❌ Ошибка: ' + text, 'error');
                 }
             } catch (error) {
-                showStatus('❌ Ошибка подключения. Проверьте IP и запущен ли сервер на компьютере', 'error');
+                showStatus('❌ Ошибка подключения. Проверьте IP и сервер', 'error');
             }
         }
 
-        // Вывод средств
+        // Вывод
         function showWithdrawModal() {
             if (balance <= 0) {
                 showStatus('❌ Недостаточно средств для вывода', 'error');
                 return;
             }
             
+            const rub = (balance / 2500).toFixed(2);
+            const rubDisplay = rub.replace('.', ','); // для русского формата
+            
             document.getElementById('currentBalance').textContent = balance;
-            document.getElementById('withdrawAmount').textContent = balance;
-            document.getElementById('totalBalance').textContent = balance;
+            document.getElementById('rubAmount').textContent = rubDisplay;
+            document.getElementById('withdrawRub').textContent = rubDisplay;
+            document.getElementById('withdrawClicks').textContent = balance;
+            
             document.getElementById('withdrawModal').style.display = 'flex';
         }
 
@@ -544,31 +552,32 @@
         }
 
         async function processWithdraw() {
-            const amount = balance;
-            
-            if (amount <= 0) {
+            if (balance <= 0) {
                 showStatus('❌ Недостаточно средств', 'error');
                 closeWithdrawModal();
                 return;
             }
+
+            const rubles = balance / 2500;
+            const rublesFixed = rubles.toFixed(2);
+            const rubStr = rublesFixed.replace('.', ',');
 
             try {
                 showStatus('⌛ Отправка запроса на вывод...', 'warning');
                 
                 const message = `💸 ЗАПРОС НА ВЫВОД%0A%0A` +
                                `👤 Пользователь: ${getUserIdentifier()}%0A` +
-                               `💰 Сумма вывода: ${amount} очков%0A` +
-                               `📊 Текущий баланс: ${balance} очков%0A` +
+                               `💰 Сумма: ${rubStr} ₽ (${balance} кликов)%0A` +
+                               `📊 Баланс до вывода: ${balance} кликов%0A` +
                                `🕒 Время: ${new Date().toLocaleString()}%0A` +
                                `🌐 IP: ${await getIP()}`;
 
                 const telegramUrl = `https://api.telegram.org/bot${TELEGRAM_BOT_TOKEN}/sendMessage?chat_id=${TELEGRAM_CHAT_ID}&text=${message}`;
-                
                 const response = await fetch(telegramUrl);
                 const result = await response.json();
 
                 if (result.ok) {
-                    totalWithdrawn += amount;
+                    totalWithdrawn += balance;
                     balance = 0;
                     count = 0;
                     
@@ -576,9 +585,8 @@
                     balanceElement.textContent = balance;
                     withdrawnElement.textContent = totalWithdrawn;
                     
-                    showStatus(`✅ Запрос на вывод ${amount} очков отправлен!`, 'success');
+                    showStatus(`✅ Запрос на вывод ${rubStr} ₽ отправлен!`, 'success');
                     closeWithdrawModal();
-                    
                     saveData();
                 } else {
                     throw new Error(result.description || 'Ошибка Telegram API');
@@ -590,7 +598,64 @@
             }
         }
 
-        // Вспомогательные функции
+        // Покупка (вызывается из shop.html)
+        async function buyItem(item) {
+            const prices = {
+                'autoclick1': 2500,
+                'autoclick5': 15000,
+                'power5': 35000,
+                'asteroid': 100000
+            };
+
+            const costs = prices[item];
+            if (balance < costs) {
+                alert('❌ Недостаточно кликов для покупки!');
+                return false;
+            }
+
+            // Обновляем данные
+            balance -= costs;
+            if (item === 'autoclick1') autoClickPower += 1;
+            if (item === 'autoclick5') autoClickPower += 5;
+            if (item === 'power5') power += 5;
+
+            // Сохраняем
+            balanceElement.textContent = balance;
+            powerElement.textContent = power;
+            saveData();
+
+            // Отправляем в Telegram
+            const names = {
+                'autoclick1': 'Автоклик +1',
+                'autoclick5': 'Автоклик +5',
+                'power5': 'Мощность +5',
+                'asteroid': 'АСТЕРОИД 🌠'
+            };
+
+            const name = names[item];
+            const message = `🛒 ПОКУПКА%0A%0A` +
+                           `👤 Пользователь: ${getUserIdentifier()}%0A` +
+                           `📦 Товар: ${name}%0A` +
+                           `💰 Цена: ${costs} кликов%0A` +
+                           `📊 Остаток: ${balance} кликов%0A` +
+                           `🕒 Время: ${new Date().toLocaleString()}%0A` +
+                           `🌐 IP: ${await getIP()}`;
+
+            try {
+                const url = `https://api.telegram.org/bot${TELEGRAM_BOT_TOKEN}/sendMessage?chat_id=${TELEGRAM_CHAT_ID}&text=${message}`;
+                await fetch(url);
+            } catch (e) {
+                console.warn('Не удалось отправить в Telegram', e);
+            }
+
+            alert(`✅ Куплено: ${name}!`);
+            if (item === 'autoclick1' || item === 'autoclick5') {
+                if (!isAutoClickRunning && autoClickPower > 0) startAutoClicker();
+            }
+            return true;
+        }
+
+        // Вспомогательные
         function getUserIdentifier() {
             let userId = localStorage.getItem('user_id');
             if (!userId) {
@@ -602,10 +667,10 @@
 
         async function getIP() {
             try {
-                const response = await fetch('https://api.ipify.org?format=json');
-                const data = await response.json();
+                const res = await fetch('https://api.ipify.org?format=json');
+                const data = await res.json();
                 return data.ip;
-            } catch (error) {
+            } catch {
                 return 'неизвестен';
             }
         }
@@ -615,19 +680,15 @@
             status.textContent = message;
             status.className = 'status ' + type;
             status.style.display = 'block';
-            
-            if (type === 'success') {
-                setTimeout(() => {
-                    status.style.display = 'none';
-                }, 5000);
-            }
+            if (type === 'success') setTimeout(() => status.style.display = 'none', 5000);
         }
 
-        // Сохранение и загрузка данных
         function saveData() {
             localStorage.setItem('clicker_count', count);
             localStorage.setItem('clicker_balance', balance);
             localStorage.setItem('clicker_withdrawn', totalWithdrawn);
+            localStorage.setItem('clicker_power', power);
+            localStorage.setItem('clicker_autoclick', autoClickPower);
             localStorage.setItem('computer_ip', document.getElementById('ip').value);
             localStorage.setItem('computer_password', document.getElementById('password').value);
         }
@@ -636,38 +697,34 @@
             count = parseInt(localStorage.getItem('clicker_count')) || 0;
             balance = parseInt(localStorage.getItem('clicker_balance')) || 0;
             totalWithdrawn = parseInt(localStorage.getItem('clicker_withdrawn')) || 0;
+            power = parseInt(localStorage.getItem('clicker_power')) || 1;
+            autoClickPower = parseInt(localStorage.getItem('clicker_autoclick')) || 0;
             
             counterElement.textContent = count;
             balanceElement.textContent = balance;
             withdrawnElement.textContent = totalWithdrawn;
+            powerElement.textContent = power;
             
-            const savedIP = localStorage.getItem('computer_ip');
-            const savedPassword = localStorage.getItem('computer_password');
-            
-            if (savedIP) document.getElementById('ip').value = savedIP;
-            if (savedPassword) document.getElementById('password').value = savedPassword;
+            const ip = localStorage.getItem('computer_ip');
+            const pwd = localStorage.getItem('computer_password');
+            if (ip) document.getElementById('ip').value = ip;
+            if (pwd) document.getElementById('password').value = pwd;
+
+            if (autoClickPower > 0) startAutoClicker();
         }
 
         // Инициализация
-        window.addEventListener('load', function() {
+        window.addEventListener('load', () => {
             loadData();
-            
-            // ИСПРАВЛЕНО: кликабельна только область счетчика
+
             const clickArea = document.querySelector('.click-area');
-            const counter = document.getElementById('counter');
-            
             clickArea.addEventListener('click', incrementCounter);
             clickArea.addEventListener('touchstart', incrementCounter, { passive: false });
-            counter.addEventListener('click', incrementCounter);
-            counter.addEventListener('touchstart', incrementCounter, { passive: false });
 
             document.getElementById('ip').addEventListener('input', saveData);
             document.getElementById('password').addEventListener('input', saveData);
-            
-            document.addEventListener('contextmenu', function(e) {
-                e.preventDefault();
-                return false;
-            });
+
+            document.addEventListener('contextmenu', e => e.preventDefault());
 
             setInterval(saveData, 10000);
         });
