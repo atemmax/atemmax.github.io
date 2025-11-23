@@ -1,4 +1,4 @@
-const CACHE_NAME = 'clicker-pwa-v1';
+const CACHE_NAME = 'clicker-pwa-v3.1'; // ← v2 — чтобы сбросить старый кеш
 const urlsToCache = [
   '/',
   '/shop',
